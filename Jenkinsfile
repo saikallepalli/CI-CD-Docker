@@ -21,7 +21,7 @@ node {
 
     stage('Sonar'){
         try {
-            sh "mvn sonar:sonar -e"
+            sh "mvn sonar:sonar"
         } catch(error){
             echo "reached ${error}"
         }
