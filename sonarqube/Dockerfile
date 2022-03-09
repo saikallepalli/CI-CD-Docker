@@ -1,1 +1,1 @@
-FROM petronetto/sonarqube-alpine
+FROM sonarqube:7.0-alpine
