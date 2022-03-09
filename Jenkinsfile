@@ -11,12 +11,9 @@ node {
         env.PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
     }
 
-    stage('git checkout process'){
-  echo 'started checkout'
-  git 'https://github.com/saikallepalli/CI-CD-Docker.git'
-  echo 'completed sucessfully'
-}
-
+    stage('Checkout') {
+        checkout scm
+    }
 stage('compile package'){
   def mvnTool = tool name: 'Maven', type: 'maven'
   sh "${mvnTool}/bin/mvn clean install" 
