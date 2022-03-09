@@ -21,12 +21,6 @@ node {
         try {
             sh "mvn sonar:sonar"
         } 
-         {
-    environment {
-        scannerHome = tool 'SonarQubeScanner'
-    }
-    
-}
          catch(error){
             echo "The sonar server could not be reached ${error}"
         }
