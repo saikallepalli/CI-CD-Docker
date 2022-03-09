@@ -14,6 +14,11 @@ node {
     stage('Checkout') {
         checkout scm
     }
+    stage('compile package'){
+  def mvnTool = tool name: 'Maven', type: 'maven'
+  sh "${mvnTool}/bin/mvn clean install" 
+}
+
 
     stage("Image Prune"){
         imagePrune(CONTAINER_NAME)
