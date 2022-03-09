@@ -16,16 +16,22 @@ node {
     stage('Build'){
         sh "mvn clean install"
     }
-
-    stage('Sonar'){
-        try {
-            sh "mvn sonar:sonar"
-            
-        } catch(error){
-            echo "The sonar server could not be reached ${error}"
+    
+    stage('Sonarqube') {
+    environment {
+        scannerHome = tool 'SonarQubeScanner'
+    }
+    steps {
+        withSonarQubeEnv('sonarqube') {
+            sh "${scannerHome}/bin/sonar-scanner"
         }
-     }
+        timeout(time: 10, unit: 'MINUTES') {
+            waitForQualityGate abortPipeline: true
+        }
+    }
+}
 
+    
     stage("Image Prune"){
         imagePrune(CONTAINER_NAME)
     }
