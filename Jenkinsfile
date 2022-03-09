@@ -21,19 +21,6 @@ node {
         try {
             sh "mvn sonar:sonar"
             
-sonar.projectKey=multi-language
-sonar.projectName=multi-language
-sonar.projectVersion=1.0
-
-sonar.modules=java,js,php
-
-sonar.sources=.
-# sonar.language=js
-sonar.sourceEncoding=UTF-8
-
-java.sonar.projectBaseDir=java
-js.sonar.projectBaseDir=js
-php.sonar.projectBaseDir=php
         } catch(error){
             echo "The sonar server could not be reached ${error}"
         }
