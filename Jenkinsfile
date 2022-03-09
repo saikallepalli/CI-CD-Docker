@@ -11,21 +11,35 @@ node {
         env.PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
     }
 
-    stage('Checkout') {
-        checkout scm
-    }
+    stage('git checkout process'){
+  echo 'started checkout'
+  git 'https://github.com/saikallepalli/CI-CD-Docker.git'
+  echo 'completed sucessfully'
+}
 
-    stage('Build'){
-        sh "mvn clean install"
-    }
+stage('compile package'){
+  def mvnTool = tool name: 'Maven', type: 'maven'
+  sh "${mvnTool}/bin/mvn clean install" 
+}
 
-    stage('Sonar'){
-        try {
-            sh "mvn sonar:sonar"
-        } catch(error){
-            echo "reached ${error}"
-        }
-     }
+  stage('SonarQube analysis') {
+    withSonarQubeEnv('sonarqube') {
+      mvnHome = '/opt/apache-maven/bin'
+      sh "${mvnHome}/mvn sonar:sonar"
+
+    }
+  }
+
+  stage("Quality Gate"){
+          timeout(time: 1, unit: 'HOURS') {
+              def qg = waitForQualityGate()
+              if (qg.status != 'OK') {
+                  emailext body: 'Your code was failed due to sonarqube quality gate', subject: 'Jenkins Failed Report', to: 'saikumar.k@psrgroup.in'
+                  error "Pipeline aborted due to quality gate failure: ${qg.status}"
+
+              }
+          }
+      }
 
     stage("Image Prune"){
         imagePrune(CONTAINER_NAME)
