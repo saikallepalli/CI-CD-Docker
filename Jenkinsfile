@@ -14,19 +14,17 @@ node {
     stage('Checkout') {
         checkout scm
     }
-    stage('compile package'){
-  def mvnTool = tool name: 'Maven', type: 'maven'
-  sh "${mvnTool}/bin/mvn clean install" 
-}
+    stage('Build'){
+        sh "mvn clean install"
+    }
+
     stage('Sonar'){
         try {
             sh "mvn sonar:sonar"
-            sh "${mvnTool}/bin/mvn clean install" 
         } catch(error){
             echo "The sonar server could not be reached ${error}"
         }
      }
-
 
     stage("Image Prune"){
         imagePrune(CONTAINER_NAME)
